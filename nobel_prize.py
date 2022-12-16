@@ -29,20 +29,26 @@ def main():
 
     while True:
         print(HELP_STRING)
+
+        while True:
+            menu_choice = input("Make a choice? \n(You can enter 1,2,h(H) or q(Q)) ").upper().strip()
         # TODO 5p Skriv bara ut hjälptexten en gång när programmet startar inte efter varje gång användaren matat in en fråga
         #      Förbättra hjälputskriften så att användaren vet vilka fält, exempelvis kemi som finns att välja på
 
         # TODO 5p Gör så att det finns ett sätt att avsluta programmet, om användaren skriver Q så skall programmet stängas av
         #      Beskriv i hjälptexten hur man avslutar programmet
         # TODO 5p Gör så att hjälptexten skrivs ut om användaren skriver h eller H
-        aaa = input(">")
-        a, b = aaa.split()
-        c = cat[b]
+        if menu_choice == '1':
+            aaa = input(">")
+            a, b = aaa.split()
 
+            if b not in cat:
+                print("You should print correct field.\n You can find the fields select 2")
+            else:
+                c = cat[b]
+                c = {"nobelPrizeYear": int(a), "nobelPrizeCategory": c}
 
-        c = {"nobelPrizeYear": int(a),"nobelPrizeCategory":c}
-
-        res = requests.get("http://api.nobelprize.org/2.1/nobelPrizes", params=c).json()
+                res = requests.get("http://api.nobelprize.org/2.1/nobelPrizes", params=c).json()
         # TODO 5p  Lägg till någon typ av avskiljare mellan pristagare, exempelvis --------------------------
 
         # TODO 20p Skriv ut hur mycket pengar varje pristagare fick, tänk på att en del priser delas mellan flera mottagare, skriv ut både i dåtidens pengar och dagens värde
