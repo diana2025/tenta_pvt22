@@ -4,10 +4,6 @@ import requests
 # vi använder oss enbart av /nobelPrizes
 # Dokumentation, hjälp samt verktyg för att testa apiet fins här: https://app.swaggerhub.com/apis/NobelMedia/NobelMasterData/2.1
 
-# Tip: use the page below to see what data we get back and how the api works
-# we only use /nobelPrizes
-# Documentation, help and tools for testing the api can be found here: https://app.swaggerhub.com/apis/NobelMedia/NobelMasterData/2.1
-
 
 # HELP_STRING = """
 # Ange ett år och fält
@@ -15,11 +11,10 @@ import requests
 # """
 
 HELP_STRING = """
-1) Write a year and field 
-Example 1965 physics
-2) If you are not sure for the fields, select this
-Q) quit
-H) help
+1) Ange ett år och fält 
+Exempelvis 1965 fysik
+Q) Quit
+H) Hjälp
 """
 
 cat = {"fysik": "phy",
@@ -41,14 +36,14 @@ cat = {"fysik": "phy",
 # calculation money for each prize
 #  variables: money:total money
 #             prize_cnt : awarded person's count
-def calcMoneyForEachPrize(money: float, prize_cnt: float):
+def calcMoneyForEachPrize(money: float, prize_cnt: float) -> float:
     average_money = money / prize_cnt
     res = round(average_money, 3)
     return res
 
 
 # check if the field is correct
-def checkfield(field: str):
+def checkfield(field: str) -> bool:
     if field not in cat:
         return False
     else:
@@ -57,9 +52,21 @@ def checkfield(field: str):
 
 # def get prizers from year and field
 def getInforamationFromServer(year: int, field: str):
-    params = {"nobelPrizeYear": year, "nobelPrizeCategory": field}
+    params = {"nobelPrizeYear": year, "nobelPrizeCategory": cat[field]}
     res = requests.get("http://api.nobelprize.org/2.1/nobelPrizes", params=params).json()
     return res
+
+
+# print the result
+def printResult(peng: float, idagpeng: float, prize_cnt: int):
+    print("*" * 30)
+    money_for_thattime = calcMoneyForEachPrize(peng, prize_cnt)
+    result1 = f'{money_for_thattime:.3f}'
+    print(f"The money of the time for each prizer is {result1}")
+
+    money_for_now = calcMoneyForEachPrize(idagpeng, prize_cnt)
+    result2 = f'{money_for_now:.3f}'
+    print(f"The Today's value for each prizer is {result2}")
 
 
 # print for year and field
@@ -80,14 +87,7 @@ def printOneFieldForYear(year: int, field: str):
             print(m['motivation']['en'])
             andel = m['portion']
             prize_cnt += 1
-        print("*" * 30)
-        money_for_thattime = calcMoneyForEachPrize(peng, prize_cnt)
-        result1 = f'{money_for_thattime:.3f}'
-        print(f"The money of the time for each prizer is {result1}")
-
-        money_for_now = calcMoneyForEachPrize(idagpeng, prize_cnt)
-        result2 = f'{money_for_now:.3f}'
-        print(f"The Today's value for each prizer is {result2}")
+        printResult(peng, idagpeng, prize_cnt)
 
 
 # print all informations for year
@@ -113,14 +113,7 @@ def printAllInformationsForYear(year: int):
                 andel = m['portion']
                 prize_cnt += 1
 
-            print("*" * 30)
-            money_for_thattime = calcMoneyForEachPrize(peng, prize_cnt)
-            result1 = f'{money_for_thattime:.3f}'
-            print(f"The money of the time for each prizer is {result1}")
-
-            money_for_now = calcMoneyForEachPrize(idagpeng, prize_cnt)
-            result2 = f'{money_for_now:.3f}'
-            print(f"The Today's value for each prizer is {result2}")
+            printResult(peng, idagpeng, prize_cnt)
 
 
 def main():
@@ -154,7 +147,8 @@ def main():
                 year = str_list[0]
             else:
                 flag = "OneField"
-                year, field = aaa.split()
+                year = str_list[0]
+                field = str_list[1]
 
             if flag == "OneField" and not checkfield(field):
                 print("You should print correct field.\n You can find the fields select 2")
